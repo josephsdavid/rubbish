@@ -118,8 +118,8 @@ def train():
     print("-------------------")
     z_pred = np.array([np.random.uniform(-1,1,100) for _ in range(49)])
     y_g = [1]*BATCH_SIZE
-    y_d_true = [1]*BATCH_SIZE
-    y_d_gen = [0]*BATCH_SIZE
+    y_d_true = [0]*BATCH_SIZE
+    y_d_gen = [1]*BATCH_SIZE
     for epoch in list(map(lambda x: x+1,range(NUM_EPOCH))):
         for index in range(num_batches):
             X_d_true = X_train[index*BATCH_SIZE:(index+1)*BATCH_SIZE]
