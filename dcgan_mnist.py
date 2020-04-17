@@ -1,23 +1,27 @@
 '''
-DCGAN on MNIST using Keras
+DCGAN on MNIST using tf.keras
 Author: Rowel Atienza
 Project: https://github.com/roatienza/Deep-Learning-Experiments
-Dependencies: tensorflow 1.0 and keras 2.0
+Dependencies: tensorflow 1.0 and tf.keras 2.0
 Usage: python3 dcgan_mnist.py
 '''
 
 import numpy as np
 import time
-from tensorflow.examples.tutorials.mnist import input_data
+import tensorflow as tf
 
-from keras.models import Sequential
-from keras.layers import Dense, Activation, Flatten, Reshape
-from keras.layers import Conv2D, Conv2DTranspose, UpSampling2D
-from keras.layers import LeakyReLU, Dropout
-from keras.layers import BatchNormalization
-from keras.optimizers import Adam, RMSprop
+from tensorflow.python.framework.ops import disable_eager_execution
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Activation, Flatten, Reshape
+from tensorflow.keras.layers import Conv2D, Conv2DTranspose, UpSampling2D
+from tensorflow.keras.layers import LeakyReLU, Dropout
+from tensorflow.keras.layers import BatchNormalization
+from tensorflow.keras.optimizers import Adam, RMSprop
+
+disable_eager_execution()
 
 import matplotlib.pyplot as plt
+
 
 class ElapsedTimer(object):
     def __init__(self):
@@ -140,11 +144,9 @@ class MNIST_DCGAN(object):
         self.img_rows = 28
         self.img_cols = 28
         self.channel = 1
-
-        self.x_train = input_data.read_data_sets("mnist",\
-        	one_hot=True).train.images
-        self.x_train = self.x_train.reshape(-1, self.img_rows,\
-        	self.img_cols, 1).astype(np.float32)
+        (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+        self.x_train = np.reshape(x_train,[-1, x_train.shape[1], x_train.shape[1], 1]).astype(np.float32)
+        self.x_train /= 255
 
         self.DCGAN = DCGAN()
         self.discriminator =  self.DCGAN.discriminator_model()
@@ -205,7 +207,7 @@ class MNIST_DCGAN(object):
 if __name__ == '__main__':
     mnist_dcgan = MNIST_DCGAN()
     timer = ElapsedTimer()
-    mnist_dcgan.train(train_steps=10000, batch_size=256, save_interval=500)
+    mnist_dcgan.train(train_steps=10000, batch_size=256, save_interval=50)
     timer.elapsed_time()
     mnist_dcgan.plot_images(fake=True)
     mnist_dcgan.plot_images(fake=False, save2file=True)
